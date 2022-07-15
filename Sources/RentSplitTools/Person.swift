@@ -10,7 +10,7 @@ import Foundation
 
 
 /// A person in a Rent Split style application
-public struct Person: Identifiable {
+public struct Person {
     
     /// The runtime-unique ID which
     public let id: AppUniqueIdentifier
@@ -29,3 +29,10 @@ public struct Person: Identifiable {
         self.name = name ?? "Person #\(id)"
     }
 }
+
+
+
+// MARK: - Conformances
+
+extension Person: Identifiable {}
+extension Person: Hashable {}

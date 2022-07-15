@@ -13,12 +13,20 @@ import Foundation
 public struct MoneySplitter {
     
     /// The mode of this money splitter
-    fileprivate let mode: Mode
+    public let mode: Mode
     
     
     public init(mode: Mode) {
         self.mode = mode
     }
+}
+
+
+
+// MARK: - Functionality
+
+public extension MoneySplitter {
+    var expenses: [Expense] { mode.expenses }
 }
 
 
@@ -52,24 +60,55 @@ public extension MoneySplitter {
         /// For example, if Morgan makes $4,000/mo, and Isi makes $500/mo, this mode will help split up the expenses to Morgan pays 8 times more than Isi for each expense
         ///
         /// - Note: This is equivalent to omitting all parameters from the `disparateIncome` enum case
-        static var disparateIncomes: Self { .disparateIncomes() }
+        public static var disparateIncomes: Self { .disparateIncomes() }
         
         /// Helps roommates coordinate sharing money when not all rommates have an income, but there are people who are willing to split their income up to share the money across everyone
         ///
         /// - Note: This is equivalent to omitting all parameters from the `moneyPooling` enum case
-        static var moneyPooling: Self { .moneyPooling() }
+        public static var moneyPooling: Self { .moneyPooling() }
     }
     
     
     
     /// A person whom is living alongside others, and the person's income
-    typealias RoommateWithIncome = (roommate: Person, income: MoneyPerTime)
+    struct RoommateWithIncome: Identifiable {
+        public let roommate: Person
+        public let income: MoneyPerTime
+        
+        public var id: Person.ID { roommate.id }
+    }
+    
+    
     
     /// A person whom is living alongside others, who is supported by a person who gives them monetary assistance
-    typealias RoommateWithBenefactor = (roommate: Person, benefactor: Person.ID)
+    struct RoommateWithBenefactor: Identifiable {
+        public let roommate: Person
+        public let benefactor: Person.ID
+        
+        public var id: Person.ID { roommate.id }
+    }
+    
+    
     
     /// A person who gives someone else monetary assistance
-    typealias Benefactor = (benefactor: Person, contribution: MoneyPerTime)
+    struct Benefactor: Identifiable {
+        public let benefactor: Person
+        public let contribution: MoneyPerTime
+        
+        public var id: Person.ID { benefactor.id }
+    }
+}
+
+
+
+fileprivate extension MoneySplitter.Mode {
+    var expenses: [Expense] {
+        switch self {
+        case .disparateIncomes(roommates: _, expenses: let expenses),
+                .moneyPooling(roommates: _, benefactors: _, expenses: let expenses):
+            return expenses
+        }
+    }
 }
 
 

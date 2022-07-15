@@ -46,3 +46,9 @@ public extension MoneyPerTime.Money {
         lhs.per(rhs)
     }
 }
+
+
+
+// MARK: - Conformances
+
+extension MoneyPerTime: Hashable {}

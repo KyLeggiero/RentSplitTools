@@ -44,3 +44,10 @@ public struct Expense {
         self.participantIds = participantIds
     }
 }
+
+
+
+// MARK: - Conformances
+
+extension Expense: Identifiable {}
+extension Expense: Hashable {}

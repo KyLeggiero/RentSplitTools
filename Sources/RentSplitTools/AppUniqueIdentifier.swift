@@ -33,7 +33,7 @@ fileprivate extension AppUniqueIdentifier {
         self.rawValue = id
         
 //        if !doNotRegister {
-//            Self.register(id: self)
+            Self.register(id: self)
 //        }
     }
 }
