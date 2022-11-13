@@ -51,3 +51,11 @@ public struct Expense {
 
 extension Expense: Identifiable {}
 extension Expense: Hashable {}
+
+
+
+extension Expense: CustomDebugStringConvertible {
+    public var debugDescription: String {
+        "\(id): \(name) @ \(rate) with participants \(participantIds.sorted())"
+    }
+}

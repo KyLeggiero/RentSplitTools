@@ -29,7 +29,7 @@ fileprivate extension AppUniqueIdentifier {
     /// - Parameters:
     ///   - id:            The value of the new app-unique ID
 //    ///   - doNotRegister: _optional_ - **Discouraged!** Iff `true`, indicates that this new identifier should _not_ be registered as one that's currently in use. Useful for testing. Defaults to `false`
-    init(id: ID, doNotRegister: Bool = false) {
+    init(id: ID/*, doNotRegister: Bool = false*/) {
         self.rawValue = id
         
 //        if !doNotRegister {
@@ -134,3 +134,11 @@ extension AppUniqueIdentifier: Identifiable {
 
 
 extension AppUniqueIdentifier: Hashable {}
+
+
+
+extension AppUniqueIdentifier: Comparable {
+    public static func < (lhs: AppUniqueIdentifier, rhs: AppUniqueIdentifier) -> Bool {
+        lhs.rawValue < rhs.rawValue
+    }
+}

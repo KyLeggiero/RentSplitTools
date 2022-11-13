@@ -24,9 +24,22 @@ public struct Person {
     /// - Parameters:
     ///   - id:   _optional_ - The ID uniquely identifying this person across this runtime. Defaults to the next available ID
     ///   - name: _optional_ - The name of this person, like `"Eda Clawthorne"`. Defaults to an auto-generated name like `"Person #1"`
-    init(id: AppUniqueIdentifier = .next(), name: String? = nil) {
+    public init(id: AppUniqueIdentifier = .next(), name: String? = nil) {
         self.id = id
-        self.name = name ?? "Person #\(id)"
+        self.name = name ?? Self.generateName(with: id)
+    }
+}
+
+
+
+// MARK: - Conveniences
+
+public extension Person {
+    /// Generates a name for a person who has not been named
+    ///
+    /// - Parameter id: The ID of the person. This is used in order to generate a unique name
+    static func generateName(with id: ID) -> String {
+        "Person #\(id)"
     }
 }
 
@@ -36,3 +49,11 @@ public struct Person {
 
 extension Person: Identifiable {}
 extension Person: Hashable {}
+
+
+
+extension Person: CustomDebugStringConvertible {
+    public var debugDescription: String {
+        "\(id): \(name)"
+    }
+}
