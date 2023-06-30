@@ -2,7 +2,7 @@
 //  MoneyPerTime.swift
 //  
 //
-//  Created by S🌟System on 2022-07-08.
+//  Created by The Northstar✨ System on 2022-07-08.
 //
 
 import CoreGraphics
@@ -83,6 +83,7 @@ private extension MoneyPerTime {
 
 // MARK: - Conformances
 
+extension MoneyPerTime: Codable {}
 extension MoneyPerTime: Hashable {}
 
 
@@ -104,6 +105,8 @@ extension MoneyPerTime: CustomStringConvertible {
 }
 
 
+
+// MARK: - Private conveniences
 
 private extension MoneyPerTime {
     static func apply(

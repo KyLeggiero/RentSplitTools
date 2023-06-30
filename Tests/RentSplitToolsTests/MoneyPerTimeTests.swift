@@ -2,7 +2,7 @@
 //  MoneyPerTimeTests.swift
 //  
 //
-//  Created by S🌟System on 10/27/22.
+//  Created by The Northstar✨ System on 10/27/22.
 //
 
 import XCTest

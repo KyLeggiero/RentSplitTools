@@ -2,10 +2,12 @@
 //  Person.swift
 //  
 //
-//  Created by S🌟System on 2022-07-08.
+//  Created by The Northstar✨ System on 2022-07-08.
 //
 
 import Foundation
+
+import AppUniqueIdentifier
 
 
 
@@ -47,6 +49,7 @@ public extension Person {
 
 // MARK: - Conformances
 
+extension Person: Codable {}
 extension Person: Identifiable {}
 extension Person: Hashable {}
 

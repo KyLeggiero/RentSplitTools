@@ -2,12 +2,13 @@
 //  MoneySplitter.swift
 //  
 //
-//  Created by S🌟System on 2022-07-07.
+//  Created by The Northstar✨ System on 2022-07-07.
 //
 
 import CoreGraphics
 import Foundation
 
+import AppUniqueIdentifier
 import SimpleLogging
 
 
@@ -422,7 +423,7 @@ public extension MoneySplitter {
     
     
     /// A person whom is living alongside others, and the person's funding source
-    struct Roommate: PersonMetadata {
+    struct Roommate: PersonMetadata, Codable {
         
         /// The ID of the person who is the roommate
         public let id: Person.ID
@@ -440,7 +441,7 @@ public extension MoneySplitter {
     
     
     /// A person who gives someone else monetary assistance
-    struct Benefactor: PersonMetadata, Hashable {
+    struct Benefactor: PersonMetadata, Hashable, Codable {
         
         /// The ID of the person who is this benefactor
         public let id: Person.ID
@@ -457,7 +458,7 @@ public extension MoneySplitter {
     
     
     
-    struct Split {
+    struct Split: Codable {
         public let shares: [RoommateShare]
     }
 }
@@ -492,7 +493,7 @@ extension Person: PersonMetadata {}
 public extension MoneySplitter.Roommate {
     
     /// Where a rommate gets the funding needed to participate in the split
-    enum Funding {
+    enum Funding: Codable {
         
         /// The roommate has an income
         /// - Parameter 0: The amount of money the roommate makes over time. This is used in order to calculate what this roommate's fair share of paying expenses is.
@@ -511,7 +512,7 @@ public extension MoneySplitter.Roommate {
 public extension MoneySplitter.Split {
     
     /// A share of the money split
-    struct RoommateShare: Hashable, Identifiable {
+    struct RoommateShare: Hashable, Identifiable, Codable {
         
         public var id: Person.ID { person.id }
         
@@ -549,7 +550,7 @@ public extension MoneySplitter.Split {
     
     
     /// An expense is some specific amount of money which is spent every so often for a specific reason by a specific person in a split
-    struct Expense: Hashable {
+    struct Expense: Hashable, Codable {
         
         /// The ID of the expense that this was split from
         public let originalExpenseId: AppUniqueIdentifier
@@ -563,7 +564,7 @@ public extension MoneySplitter.Split {
     
     
     
-    enum Funding: Hashable {
+    enum Funding: Hashable, Codable {
         case income(rate: MoneyPerTime)
         case benefactor(Person, rate: MoneyPerTime)
         
@@ -676,3 +677,9 @@ extension MoneySplitter.Split.Funding: CustomStringConvertible {
         }
     }
 }
+
+
+
+// MARK: - Conformance
+
+extension MoneySplitter: Codable {}

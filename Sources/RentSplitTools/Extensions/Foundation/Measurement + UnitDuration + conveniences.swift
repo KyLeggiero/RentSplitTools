@@ -2,7 +2,7 @@
 //  Measurement + UnitDuration + conveniences.swift
 //  
 //
-//  Created by S🌟System on 2022-07-09.
+//  Created by The Northstar✨ System on 2022-07-09.
 //
 
 import Foundation

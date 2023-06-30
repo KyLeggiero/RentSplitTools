@@ -2,7 +2,7 @@
 //  Sequence + better sorting.swift
 //  Rent Split
 //
-//  Created by S🌟System on 10/16/22.
+//  Created by The Northstar✨ System on 10/16/22.
 //
 
 import Foundation

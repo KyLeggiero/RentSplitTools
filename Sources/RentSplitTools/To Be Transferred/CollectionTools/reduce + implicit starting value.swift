@@ -2,7 +2,7 @@
 //  reduce + implicit starting value.swift
 //  
 //
-//  Created by S🌟System on 2022-08-04.
+//  Created by The Northstar✨ System on 2022-08-04.
 //
 
 import Foundation

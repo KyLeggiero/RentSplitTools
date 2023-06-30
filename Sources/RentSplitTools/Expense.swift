@@ -2,10 +2,11 @@
 //  Expense.swift
 //  
 //
-//  Created by S🌟System on 2022-07-08.
+//  Created by The Northstar✨ System on 2022-07-08.
 //
 
 import Foundation
+import AppUniqueIdentifier
 
 
 
@@ -49,6 +50,7 @@ public struct Expense {
 
 // MARK: - Conformances
 
+extension Expense: Codable {}
 extension Expense: Identifiable {}
 extension Expense: Hashable {}
 
