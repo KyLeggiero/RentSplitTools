@@ -18,10 +18,10 @@ let package = Package(
     dependencies: [
         // Dependencies declare other packages that this package depends on.
         // .package(url: /* package url */, from: "1.0.0"),
+        .package(url: "https://github.com/RougeWare/AppUniqueIdentifier.git", from: "1.0.0"),
         .package(url: "https://github.com/RougeWare/Swift-Basic-Math-Tools.git", from: "1.1.1"),
-        .package(url: "https://github.com/RougeWare/Swift-Simple-Logging.git", from: "0.5.2"),
         .package(url: "https://github.com/RougeWare/Swift-MultiplicativeArithmetic.git", from: "1.3.0"),
-        .package(url: "https://github.com/RougeWare/AppUniqueIdentifier.git", from: "1.0.0")
+        .package(url: "https://github.com/RougeWare/Swift-Simple-Logging.git", from: "0.5.2"),
     ],
     targets: [
         // Targets are the basic building blocks of a package. A target can define a module or a test suite.
@@ -29,9 +29,10 @@ let package = Package(
         .target(
             name: "RentSplitTools",
             dependencies: [
+                "AppUniqueIdentifier",
                 .product(name: "BasicMathTools", package: "Swift-Basic-Math-Tools"),
-                .product(name: "SimpleLogging", package: "Swift-Simple-Logging"),
                 .product(name: "MultiplicativeArithmetic", package: "Swift-MultiplicativeArithmetic"),
+                .product(name: "SimpleLogging", package: "Swift-Simple-Logging"),
             ]),
         .testTarget(
             name: "RentSplitToolsTests",

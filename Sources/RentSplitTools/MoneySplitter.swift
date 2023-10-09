@@ -81,7 +81,7 @@ public struct MoneySplitter {
     {
         self.init(
             people: people,
-            roommates: .default(for: people),
+            roommates: .convert(people),
             benefactors: benefactors,
             expenses: expenses
         )
@@ -94,7 +94,7 @@ public struct MoneySplitter {
     {
         self.init(
             people: people,
-            roommates: .default(for: people),
+            roommates: .convert(people),
             benefactors: benefactors,
             expenses: .default(for: people)
         )
@@ -128,6 +128,46 @@ public extension MoneySplitter {
     
     
     // MARK: People
+    
+    /// Adds a person to the money split
+    ///
+    /// - Note: The person will be added no matter what. If you add them as a roommate and as a benefactor, they'll be added as both of these.
+    ///         If you add the person without specifiying either of these, then they'll be added but might not show up in the application's UI, depending on how the developer implemented it
+    ///
+    /// - Parameters:
+    ///   - person:     The person to add
+    ///   - roommateConfig: _optional_ - If non-`nil`, adds this person as a roommate, using the given configuration. If `nil`, the person is added but not as a rommate
+    ///   - benefactorConfig: _optional_ - If non-`nil`, adds this person as a benefactor, using the given configuration. If `nil`, the person is added but not as a benefactor
+    mutating func add(
+        person: Person,
+        asRoommate roommateConfig: Roommate.Configuration? = nil,
+        asBenefactor benefactorConfig: Benefactor.Configuration? = nil)
+    {
+        people.appendIfUnique(person, by: \.id)
+        
+        if let roommateConfig {
+            roommates.appendIfUnique(Roommate(id: person.id, configuration: roommateConfig), by: \.id)
+        }
+        if let benefactorConfig {
+            benefactors.appendIfUnique(Benefactor(id: person.id, configuration: benefactorConfig), by: \.id)
+        }
+    }
+    
+    
+    /// Adds an expense to the money split
+    ///
+    /// - Parameters:
+    ///   - expense: The expense to add
+    mutating func add(expense: Expense) {
+        expenses.appendIfUnique(expense, by: \.id)
+    }
+    
+    
+    /// Creates a new expense and adds it to the money split
+    mutating func addNewExpense() {
+        expenses.append(Expense(participantIds: Set(people.map(\.id))))
+    }
+    
     
     func get<Field, MetaPerson: PersonMetadata>(_ field: KeyPath<Person, Field>, of person: MetaPerson) -> Field? {
         people.get(field, ofElementWithId: person.id)
@@ -192,7 +232,7 @@ private extension MoneySplitter {
     ///   - mutator:   The function which will mutate the person
     /// - Returns: The new value after mutation, or `nil` if no such person exists
     @discardableResult
-    mutating func mutate(PersonWithId personId: Person.ID, by mutator: (inout Person) -> Void) -> Person? {
+    mutating func mutate(personWithId personId: Person.ID, by mutator: (inout Person) -> Void) -> Person? {
         people.mutate(elementWithId: personId, by: mutator)
     }
     
@@ -423,7 +463,7 @@ public extension MoneySplitter {
     
     
     /// A person whom is living alongside others, and the person's funding source
-    struct Roommate: PersonMetadata, Codable {
+    struct Roommate: PersonMetadata, Equatable, Codable {
         
         /// The ID of the person who is the roommate
         public let id: Person.ID
@@ -465,6 +505,48 @@ public extension MoneySplitter {
 
 
 
+public extension MoneySplitter.Roommate {
+    struct Configuration {
+        
+        let funding: Funding
+        
+        
+        public init(funding: Funding) {
+            self.funding = funding
+        }
+    }
+    
+    
+    
+    init(id: ID, configuration: Configuration) {
+        self.id = id
+        self.funding = configuration.funding
+    }
+}
+
+
+
+public extension MoneySplitter.Benefactor {
+    struct Configuration {
+        
+        let contribution: MoneyPerTime
+        
+        
+        init(contribution: MoneyPerTime) {
+            self.contribution = contribution
+        }
+    }
+    
+    
+    
+    init(id: ID, configuration: Configuration) {
+        self.id = id
+        self.contribution = configuration.contribution
+    }
+}
+
+
+
 extension MoneySplitter: CustomDebugStringConvertible {
     public var debugDescription: String {
         [
@@ -493,7 +575,7 @@ extension Person: PersonMetadata {}
 public extension MoneySplitter.Roommate {
     
     /// Where a rommate gets the funding needed to participate in the split
-    enum Funding: Codable {
+    enum Funding: Equatable, Codable {
         
         /// The roommate has an income
         /// - Parameter 0: The amount of money the roommate makes over time. This is used in order to calculate what this roommate's fair share of paying expenses is.
@@ -611,10 +693,16 @@ extension MoneySplitter.Split.Funding: CustomDebugStringConvertible {
 
 // MARK: - Default values
 
+public extension MoneySplitter.Roommate.Funding {
+    static var `default`: Self { .income(1200 / .month) }
+}
+
+
+
 public extension Array where Element == MoneySplitter.Roommate {
-    static func `default`(for people: [Person]) -> Self {
+    static func convert(_ people: [Person]) -> Self {
         people.map { person in
-            Element(id: person.id, funding: .income(1200 / .month))
+            Element(id: person.id, funding: .default)
         }
     }
 }
@@ -626,6 +714,15 @@ public extension Array where Element == Person {
         Element(),
         Element(),
     ] }
+}
+
+
+
+public extension MoneySplitter.Expense {
+    init(participantIds: Set<Person.ID> = []) {
+        let id = AppUniqueIdentifier.next()
+        self.init(id: id, name: "Expense #\(id)", rate: 100 / .month, participantIds: participantIds)
+    }
 }
 
 
