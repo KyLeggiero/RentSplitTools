@@ -9,6 +9,7 @@ import CoreGraphics
 import Foundation
 
 import AppUniqueIdentifier
+import CollectionTools
 import SimpleLogging
 
 
@@ -17,7 +18,7 @@ import SimpleLogging
 public struct MoneySplitter {
     
     /// Everyone participating in this split
-    public var people: [Person] {
+    public internal(set) var people: [Person] {
         didSet {
             recalculateSplit()
         }
@@ -239,6 +240,8 @@ private extension MoneySplitter {
     
     mutating func recalculateSplit() {
         
+        removeOrphans()
+        
         let benefactorSplits = calculateBenefactorSplits()
         let totalFunds = self.calcualteTotalRoommateFunds(beneficiarySplits: benefactorSplits)
         
@@ -248,6 +251,24 @@ private extension MoneySplitter {
                 beneficiarySplits: benefactorSplits,
                 totalIncomes: totalFunds)
         })
+    }
+    
+    
+    mutating func removeOrphans() {
+        let orphans = people
+            .enumerated()
+            .filter { _, person in
+                !benefactors.contains(where: { $0.id == person.id })
+                && !roommates.contains(where: { $0.id == person.id })
+            }
+        
+        guard orphans.isNotEmpty else { return }
+        
+        self.people.remove(atOffsets: IndexSet(orphans.map(\.offset)))
+        
+        orphans.forEach { _, person in
+            AppUniqueIdentifier.recycle(id: person.id)
+        }
     }
     
     
@@ -532,7 +553,7 @@ public extension MoneySplitter.Benefactor {
         let contribution: MoneyPerTime
         
         
-        init(contribution: MoneyPerTime) {
+        public init(contribution: MoneyPerTime) {
             self.contribution = contribution
         }
     }

@@ -20,6 +20,7 @@ let package = Package(
         // .package(url: /* package url */, from: "1.0.0"),
         .package(url: "https://github.com/RougeWare/AppUniqueIdentifier.git", from: "1.0.0"),
         .package(url: "https://github.com/RougeWare/Swift-Basic-Math-Tools.git", from: "1.1.1"),
+        .package(url: "https://github.com/RougeWare/Swift-Collection-Tools.git", from: "3.2.0"),
         .package(url: "https://github.com/RougeWare/Swift-MultiplicativeArithmetic.git", from: "1.3.0"),
         .package(url: "https://github.com/RougeWare/Swift-Simple-Logging.git", from: "0.5.2"),
     ],
@@ -31,6 +32,7 @@ let package = Package(
             dependencies: [
                 "AppUniqueIdentifier",
                 .product(name: "BasicMathTools", package: "Swift-Basic-Math-Tools"),
+                .product(name: "CollectionTools", package: "Swift-Collection-Tools"),
                 .product(name: "MultiplicativeArithmetic", package: "Swift-MultiplicativeArithmetic"),
                 .product(name: "SimpleLogging", package: "Swift-Simple-Logging"),
             ]),
