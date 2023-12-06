@@ -72,6 +72,7 @@ public extension MoneyPerTime {
 
 private extension MoneyPerTime {
     mutating func convertMoney(from oldTime: Time, to newTime: Time) {
+        guard oldTime != newTime else { return }
         let oldSeconds = oldTime.converted(to: .seconds).value
         let newSeconds = newTime.converted(to: .seconds).value
         let ratePerSecond = money / oldSeconds
@@ -119,6 +120,14 @@ private extension MoneyPerTime {
     
     
     static func apply(
+        _ operator: (Money) -> Money,
+        to operand: MoneyPerTime)
+    -> MoneyPerTime {
+        MoneyPerTime(money: `operator`(operand.monthly.money), per: .months)
+    }
+    
+    
+    static func apply(
         _ operator: (Money, Money) -> Money,
         to operands: (lhs: MoneyPerTime,
                       rhs: Money))
@@ -149,6 +158,22 @@ extension MoneyPerTime: AdditiveArithmetic {
 // MARK: - MultiplicativeArithmetic
 
 extension MoneyPerTime: SimpleMultiplicativeArithmetic {
+    
+    public func pow(_ exponent: MoneyPerTime) -> MoneyPerTime {
+        Self.apply(CoreGraphics.pow, to: (lhs: self, rhs: exponent))
+    }
+    
+    
+    public func pow(_ exponent: Money) -> MoneyPerTime {
+        Self.apply(CoreGraphics.pow, to: (lhs: self, rhs: exponent))
+    }
+    
+    
+    public func sqrt() -> MoneyPerTime {
+        Self.apply(CoreGraphics.sqrt, to: self)
+    }
+    
+    
     public static func * (lhs: MoneyPerTime, rhs: MoneyPerTime) -> MoneyPerTime {
         apply(*, to: (lhs, rhs))
     }
