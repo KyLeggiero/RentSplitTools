@@ -35,6 +35,9 @@ let package = Package(
                 .product(name: "CollectionTools", package: "Swift-Collection-Tools"),
                 .product(name: "MultiplicativeArithmetic", package: "Swift-MultiplicativeArithmetic"),
                 .product(name: "SimpleLogging", package: "Swift-Simple-Logging"),
+            ],
+            resources: [
+                .copy("Resources/Assets.xcassets")
             ]),
         .testTarget(
             name: "RentSplitToolsTests",

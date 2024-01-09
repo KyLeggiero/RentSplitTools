@@ -17,6 +17,8 @@ import SimpleLogging
 /// Performs the heavy-lifting of splitting money across people
 public struct MoneySplitter {
     
+    public let id: UUID
+    
     /// Everyone participating in this split
     public internal(set) var people: [Person] {
         didSet {
@@ -49,11 +51,13 @@ public struct MoneySplitter {
     
     
     public init(
+        id: UUID = .init(),
         people: [Person] = .default,
         roommates: [Roommate],
         benefactors: [Benefactor] = .default,
         expenses: [Expense])
     {
+        self.id = id
         self.people = people
         self.roommates = roommates
         self.benefactors = benefactors
@@ -64,11 +68,13 @@ public struct MoneySplitter {
     
     
     public init(
+        id: UUID = .init(),
         people: [Person] = .default,
         roommates: [Roommate],
         benefactors: [Benefactor] = .default)
     {
-        self.init(people: people,
+        self.init(id: id,
+                  people: people,
                   roommates: roommates,
                   benefactors: benefactors,
                   expenses: .default(for: people))
@@ -76,11 +82,13 @@ public struct MoneySplitter {
     
     
     public init(
+        id: UUID = .init(),
         people: [Person] = .default,
         benefactors: [Benefactor] = .default,
         expenses: [Expense])
     {
         self.init(
+            id: id,
             people: people,
             roommates: .convert(people),
             benefactors: benefactors,
@@ -90,10 +98,12 @@ public struct MoneySplitter {
     
     
     public init(
+        id: UUID = .init(),
         people: [Person] = .default,
         benefactors: [Benefactor] = .default)
     {
         self.init(
+            id: id,
             people: people,
             roommates: .convert(people),
             benefactors: benefactors,
@@ -152,6 +162,24 @@ public extension MoneySplitter {
         if let benefactorConfig {
             benefactors.appendIfUnique(Benefactor(id: person.id, configuration: benefactorConfig), by: \.id)
         }
+    }
+    
+    
+    /// Adds a new person to the money split as a roommate with default configuration
+    ///
+    /// - Parameter config: _optional_ - The configuration for this new roommate. Defaults to the default configuration
+    mutating func addNewRoommate(config: Roommate.Configuration = .init()) {
+        add(person: .init(color: .auto(for: self)),
+            asRoommate: config)
+    }
+    
+    
+    /// Adds a new person to the money split as a benefactor with default configuration
+    ///
+    /// - Parameter config: _optional_ - The configuration for this new benefactor. Defaults to the default configuration
+    mutating func addNewBenefactor(config: Benefactor.Configuration = .init()) {
+        add(person: .init(color: .auto(for: self)),
+            asBenefactor: config)
     }
     
     
@@ -342,7 +370,8 @@ private extension MoneySplitter {
         
         
         guard let roommate = person(withId: roommate.id) else {
-            return .init(person: Person(id: roommate.id),
+            return .init(person: Person(id: roommate.id, 
+                                        color: .error),
                          funding: funding,
                          expenses: [],
                          benefits: [:])
@@ -532,7 +561,7 @@ public extension MoneySplitter.Roommate {
         let funding: Funding
         
         
-        public init(funding: Funding) {
+        public init(funding: Funding = .default) {
             self.funding = funding
         }
     }
@@ -553,7 +582,7 @@ public extension MoneySplitter.Benefactor {
         let contribution: MoneyPerTime
         
         
-        public init(contribution: MoneyPerTime) {
+        public init(contribution: MoneyPerTime = 2400 / .month) {
             self.contribution = contribution
         }
     }
@@ -732,8 +761,8 @@ public extension Array where Element == MoneySplitter.Roommate {
 
 public extension Array where Element == Person {
     static var `default`: Self { [
-        Element(),
-        Element(),
+        Element(color: .predefined(index: 1)),
+        Element(color: .predefined(index: 2)),
     ] }
 }
 
