@@ -382,7 +382,10 @@ private extension MoneySplitter {
             funding: funding,
             expenses: .init(expenses
                 .lazy
-                .filter { $0.participantIds.contains(roommate.id) }
+                .filter {
+                    $0.participantIds.isEmpty
+                    || $0.participantIds.contains(roommate.id)
+                }
                 .map { expense in
                     .init(originalExpenseId: expense.id,
                           participantId: roommate.id,
